@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Events\Auth\UserActivationEmail;
 use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -77,6 +78,9 @@ class RegisterController extends Controller
      */
     protected function registered(Request $request, $user)
     {
+        // sending email with event
+        event(new UserActivationEmail($user));
+
         $this->guard()->logout();
 
         return redirect()->route('login')->withSuccess(
