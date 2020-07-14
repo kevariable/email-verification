@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 
 class ActivationController extends Controller
 {
-    public function activate(Request $request)
+    public function __invoke(Request $request)
     {
         $user = User::activation($request->email, $request->token)->firstOrFail();
 
