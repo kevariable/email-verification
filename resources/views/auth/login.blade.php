@@ -62,6 +62,12 @@
                                         {{ __('Forgot Your Password?') }}
                                     </a>
                                 @endif
+
+                                @if (Route::has('auth.activate.resend'))
+                                    <a class="btn btn-link" href="{{ route('auth.activate.resend') }}">
+                                        {{ __('Resend Activation?') }}
+                                    </a>
+                                @endif
                             </div>
                         </div>
                     </form>
