@@ -18,6 +18,9 @@ class ResendActivationController extends Controller
     {
         $user = User::whereEmail($request->email)->first();
 
+        if ($user->activation_token === null)
+            return redirect()->route('auth.activate.resend')->withFailed('Your account already activation!');
+
         // resend with event
         event(new UserActivationEmail($user));
 
