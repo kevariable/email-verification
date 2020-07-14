@@ -3,3 +3,9 @@
         {{ $message }}
     </div>
 @endif
+
+@if ($message = session('failed'))
+    <div class="alert alert-danger">
+        {{ $message }}
+    </div>
+@endif
