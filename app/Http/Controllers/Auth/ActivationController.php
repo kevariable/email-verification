@@ -3,25 +3,56 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\ActivationRequest;
 use App\User;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class ActivationController extends Controller
 {
-    public function __invoke(Request $request)
-    {
-        $user = User::activation($request->email, $request->token)->firstOrFail();
+	public function __invoke(ActivationRequest $request)
+	{
+		$user = $this->credentials($request);
 
-        $user->update([
-            'active' => true,
-            'activation_token' => null
-        ]);
+		return $this->attempActivation($user);
+	}
 
-        Auth::loginUsingId($user->id);
+	private function credentials(): object
+	{
+		$user = User::whereEmail(request()->email)
+			->whereActivationToken(request()->token)
+			->first();
 
-        return redirect()->route('home')->withSuccess(
-            'Activated! You\'are now sign in'
-        );
-    }
+		if (!$user) {
+			return User::whereEmail(request()->email)->whereActivationToken(null)->first();
+		}
+
+		return $user;
+	}
+
+	private function attempActivation($user)
+	{
+		try {
+			if ($user->activation_token !== null && !$user->active) {
+				$user->update([
+					'activation_token' => null,
+					'active' => true
+				]);
+
+				auth()->login($user);
+
+				return redirect()->route('home')->withSuccess(
+					"Welcome $user->name, Your account successfully activation."
+				);
+			}
+
+			if ($user->active && $user->activation_token === null) {
+				return redirect()->route('login')->withFailed(
+					'Your account already activate, please login.'
+				);
+			}
+		} catch (\Exception $e) {
+			return redirect()->route('login')->withFailed(
+				'Invalid token, try again'
+			);
+		}
+	}
 }
