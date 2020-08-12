@@ -45,6 +45,15 @@ class ActivationController extends Controller
 			}
 
 			if ($user->active && $user->activation_token === null) {
+                
+                if (auth()->user()->email !== $user->email) {
+                    auth()->logout();
+
+                    return redirect()->route('login')->withFailed(
+                        'Sorry, who are you?'
+                    );
+                }
+                
 				return redirect()->route('login')->withFailed(
 					'Your account already activate, please login.'
 				);
