@@ -19,7 +19,7 @@ class ResendActivationController extends Controller
         $user = User::whereEmail($request->email)->first();
 
         // send email if user active yet
-        if (event(new UserEmailActivation($user))) {
+        if (event(new UserActivationEmail($user))) {
             return redirect()->route('login')->withSuccess(
                 'Your activation has sended, check your email.'
             );
