@@ -54,9 +54,9 @@ class ActivationController extends Controller
                     );
                 }
                 
-				return redirect()->route('login')->withFailed(
-					'Your account already activate, please login.'
-				);
+				return redirect()->route('home')->withFailed(
+                    'Your account already activate!'
+                );
 			}
 		} catch (\Exception $e) {
 			return redirect()->route('login')->withFailed(
