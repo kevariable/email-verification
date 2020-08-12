@@ -28,8 +28,7 @@ class SendingActivationEmail
      */
     public function handle(UserActivationEmail $event)
     {
-        if ($event->user->active)
-            return;
+        if ($event->user->active) return false;
 
         return Mail::to($event->user->email)->send(new ActivationEmail($event->user));
     }
